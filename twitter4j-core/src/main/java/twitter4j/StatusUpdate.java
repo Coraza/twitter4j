@@ -40,6 +40,7 @@ public final class StatusUpdate implements java.io.Serializable {
     private File mediaFile;
     private long[] mediaIds;
     private boolean autoPopulateReplyMetadata = true ;
+    private long[] excludeReplyUserIds;
 
 
     public StatusUpdate(String status) {
@@ -191,7 +192,15 @@ public final class StatusUpdate implements java.io.Serializable {
 	public void setAutoPopulateReplyMetadata(boolean autoPopulateReplyMetadata) {
 		this.autoPopulateReplyMetadata = autoPopulateReplyMetadata;
 	}
-
+	
+	public long[] getExcludeReplyUserIds() {
+        return excludeReplyUserIds;
+    }
+	
+    public void setExcludeReplyUserIds(long[] excludeReplyUserIds) {
+        this.excludeReplyUserIds = excludeReplyUserIds;
+    }
+	
 	/*package*/ HttpParameter[] asHttpParameterArray() {
         ArrayList<HttpParameter> params = new ArrayList<HttpParameter>();
         appendParameter("status", status, params);
@@ -210,6 +219,11 @@ public final class StatusUpdate implements java.io.Serializable {
         if(!autoPopulateReplyMetadata){
             appendParameter("auto_populate_reply_metadata", "false", params);
         }
+        
+        if (this.excludeReplyUserIds != null && this.excludeReplyUserIds.length >= 1) {
+            params.add(new HttpParameter("exclude_reply_user_ids", StringUtil.join(this.excludeReplyUserIds)));
+        }
+        
         if (null != mediaFile) {
             params.add(new HttpParameter("media[]", mediaFile));
             params.add(new HttpParameter("possibly_sensitive", possiblySensitive));
